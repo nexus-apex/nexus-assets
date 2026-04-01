@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Assets | NexusAssets{% endblock %}
+{% block page_title %}Assets{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+  <form class="search-bar" method="get" style="flex:1;margin-bottom:0">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search assets...">
+    <select name="status" onchange="this.form.submit()">
+      <option value="">All Category</option>
+      <option value="laptop" {% if status_filter == 'laptop' %}selected{% endif %}>Laptop</option>
+      <option value="desktop" {% if status_filter == 'desktop' %}selected{% endif %}>Desktop</option>
+      <option value="monitor" {% if status_filter == 'monitor' %}selected{% endif %}>Monitor</option>
+      <option value="phone" {% if status_filter == 'phone' %}selected{% endif %}>Phone</option>
+      <option value="server" {% if status_filter == 'server' %}selected{% endif %}>Server</option>
+      <option value="network" {% if status_filter == 'network' %}selected{% endif %}>Network</option>
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm">Search</button>
+  </form>
+  <a href="/assets/create/" class="btn btn-primary">+ New Asset</a>
+</div>
+
+<div class="card">
+  {% if records %}
+  <table>
+    <thead>
+      <tr><th>Name</th><th>Asset Tag</th><th>Category</th><th>Purchase Date</th><th>Purchase Cost</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td><a href="/assets/{{ r.pk }}/edit/"><strong>{{ r.name }}</strong></a></td>
+        <td>{{ r.asset_tag|default:"-" }}</td>
+        <td><span class="badge badge-blue">{{ r.get_category_display }}</span></td>
+        <td style="color:var(--muted)">{{ r.purchase_date|date:"M d, Y"|default:"-" }}</td>
+        <td>{{ r.purchase_cost|floatformat:2 }}</td>
+        <td class="actions">
+          <a href="/assets/{{ r.pk }}/edit/" class="btn btn-primary btn-sm">Edit</a>
+          <form method="post" action="/assets/{{ r.pk }}/delete/" style="display:inline" onsubmit="return confirm('Delete?')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Del</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No assets found.</p>
+    <a href="/assets/create/" class="btn btn-primary" style="margin-top:1rem">Create Asset</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
