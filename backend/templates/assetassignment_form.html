@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}{% if editing %}Edit{% else %}New{% endif %} AssetAssignment | NexusAssets{% endblock %}
+{% block page_title %}{% if editing %}Edit AssetAssignment{% else %}New AssetAssignment{% endif %}{% endblock %}
+{% block content %}
+<div class="card" style="max-width:750px">
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-row">
+      <div class="form-group">
+        <label>Asset Name</label>
+        <input type="text" name="asset_name" value="{{ record.asset_name|default:'' }}">
+      </div>
+      <div class="form-group">
+        <label>Assigned To</label>
+        <input type="text" name="assigned_to" value="{{ record.assigned_to|default:'' }}">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Department</label>
+        <input type="text" name="department" value="{{ record.department|default:'' }}">
+      </div>
+      <div class="form-group">
+        <label>Assigned Date</label>
+        <input type="date" name="assigned_date" value="{{ record.assigned_date|date:'Y-m-d'|default:'' }}">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Returned Date</label>
+        <input type="date" name="returned_date" value="{{ record.returned_date|date:'Y-m-d'|default:'' }}">
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select name="status">
+          <option value="active" {% if record.status == 'active' %}selected{% endif %}>Active</option>
+          <option value="returned" {% if record.status == 'returned' %}selected{% endif %}>Returned</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Condition</label>
+        <input type="text" name="condition" value="{{ record.condition|default:'' }}">
+      </div>
+    </div>
+
+    <div style="display:flex;gap:0.75rem;margin-top:1rem">
+      <button type="submit" class="btn btn-primary">{% if editing %}Update{% else %}Create{% endif %} AssetAssignment</button>
+      <a href="/assetassignments/" class="btn" style="background:var(--border);color:var(--text)">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
