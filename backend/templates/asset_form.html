@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}{% if editing %}Edit{% else %}New{% endif %} Asset | NexusAssets{% endblock %}
+{% block page_title %}{% if editing %}Edit Asset{% else %}New Asset{% endif %}{% endblock %}
+{% block content %}
+<div class="card" style="max-width:750px">
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-row">
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" name="name" value="{{ record.name|default:'' }}">
+      </div>
+      <div class="form-group">
+        <label>Asset Tag</label>
+        <input type="text" name="asset_tag" value="{{ record.asset_tag|default:'' }}">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Category</label>
+        <select name="category">
+          <option value="laptop" {% if record.category == 'laptop' %}selected{% endif %}>Laptop</option>
+          <option value="desktop" {% if record.category == 'desktop' %}selected{% endif %}>Desktop</option>
+          <option value="monitor" {% if record.category == 'monitor' %}selected{% endif %}>Monitor</option>
+          <option value="phone" {% if record.category == 'phone' %}selected{% endif %}>Phone</option>
+          <option value="server" {% if record.category == 'server' %}selected{% endif %}>Server</option>
+          <option value="network" {% if record.category == 'network' %}selected{% endif %}>Network</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Purchase Date</label>
+        <input type="date" name="purchase_date" value="{{ record.purchase_date|date:'Y-m-d'|default:'' }}">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Purchase Cost</label>
+        <input type="number" step="0.01" name="purchase_cost" value="{{ record.purchase_cost|default:'0' }}">
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select name="status">
+          <option value="in_use" {% if record.status == 'in_use' %}selected{% endif %}>In Use</option>
+          <option value="available" {% if record.status == 'available' %}selected{% endif %}>Available</option>
+          <option value="maintenance" {% if record.status == 'maintenance' %}selected{% endif %}>Maintenance</option>
+          <option value="retired" {% if record.status == 'retired' %}selected{% endif %}>Retired</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Assigned To</label>
+        <input type="text" name="assigned_to" value="{{ record.assigned_to|default:'' }}">
+      </div>
+      <div class="form-group">
+        <label>Location</label>
+        <input type="text" name="location" value="{{ record.location|default:'' }}">
+      </div>
+    </div>
+
+    <div style="display:flex;gap:0.75rem;margin-top:1rem">
+      <button type="submit" class="btn btn-primary">{% if editing %}Update{% else %}Create{% endif %} Asset</button>
+      <a href="/assets/" class="btn" style="background:var(--border);color:var(--text)">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
