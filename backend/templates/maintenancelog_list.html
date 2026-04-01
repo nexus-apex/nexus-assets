@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Maintenancelogs | NexusAssets{% endblock %}
+{% block page_title %}Maintenancelogs{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+  <form class="search-bar" method="get" style="flex:1;margin-bottom:0">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search maintenancelogs...">
+    <select name="status" onchange="this.form.submit()">
+      <option value="">All Maintenance Type</option>
+      <option value="repair" {% if status_filter == 'repair' %}selected{% endif %}>Repair</option>
+      <option value="upgrade" {% if status_filter == 'upgrade' %}selected{% endif %}>Upgrade</option>
+      <option value="inspection" {% if status_filter == 'inspection' %}selected{% endif %}>Inspection</option>
+      <option value="replacement" {% if status_filter == 'replacement' %}selected{% endif %}>Replacement</option>
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm">Search</button>
+  </form>
+  <a href="/maintenancelogs/create/" class="btn btn-primary">+ New MaintenanceLog</a>
+</div>
+
+<div class="card">
+  {% if records %}
+  <table>
+    <thead>
+      <tr><th>Asset Name</th><th>Maintenance Type</th><th>Date</th><th>Cost</th><th>Vendor</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td><a href="/maintenancelogs/{{ r.pk }}/edit/"><strong>{{ r.asset_name }}</strong></a></td>
+        <td><span class="badge badge-blue">{{ r.get_maintenance_type_display }}</span></td>
+        <td style="color:var(--muted)">{{ r.date|date:"M d, Y"|default:"-" }}</td>
+        <td>{{ r.cost|floatformat:2 }}</td>
+        <td>{{ r.vendor|default:"-" }}</td>
+        <td class="actions">
+          <a href="/maintenancelogs/{{ r.pk }}/edit/" class="btn btn-primary btn-sm">Edit</a>
+          <form method="post" action="/maintenancelogs/{{ r.pk }}/delete/" style="display:inline" onsubmit="return confirm('Delete?')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Del</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No maintenancelogs found.</p>
+    <a href="/maintenancelogs/create/" class="btn btn-primary" style="margin-top:1rem">Create MaintenanceLog</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
