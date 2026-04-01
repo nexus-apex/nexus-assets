@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Assetassignments | NexusAssets{% endblock %}
+{% block page_title %}Assetassignments{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+  <form class="search-bar" method="get" style="flex:1;margin-bottom:0">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search assetassignments...">
+    <select name="status" onchange="this.form.submit()">
+      <option value="">All Status</option>
+      <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active</option>
+      <option value="returned" {% if status_filter == 'returned' %}selected{% endif %}>Returned</option>
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm">Search</button>
+  </form>
+  <a href="/assetassignments/create/" class="btn btn-primary">+ New AssetAssignment</a>
+</div>
+
+<div class="card">
+  {% if records %}
+  <table>
+    <thead>
+      <tr><th>Asset Name</th><th>Assigned To</th><th>Department</th><th>Assigned Date</th><th>Returned Date</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td><a href="/assetassignments/{{ r.pk }}/edit/"><strong>{{ r.asset_name }}</strong></a></td>
+        <td>{{ r.assigned_to|default:"-" }}</td>
+        <td>{{ r.department|default:"-" }}</td>
+        <td style="color:var(--muted)">{{ r.assigned_date|date:"M d, Y"|default:"-" }}</td>
+        <td style="color:var(--muted)">{{ r.returned_date|date:"M d, Y"|default:"-" }}</td>
+        <td class="actions">
+          <a href="/assetassignments/{{ r.pk }}/edit/" class="btn btn-primary btn-sm">Edit</a>
+          <form method="post" action="/assetassignments/{{ r.pk }}/delete/" style="display:inline" onsubmit="return confirm('Delete?')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Del</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No assetassignments found.</p>
+    <a href="/assetassignments/create/" class="btn btn-primary" style="margin-top:1rem">Create AssetAssignment</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
